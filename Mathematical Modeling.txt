@@ -1,0 +1,170 @@
+﻿McKay Hartman
+October 18, 2024
+QUESTION:
+
+
+        A sequence of natural numbers is determined by the following formula an+1 = an + f(n), where f(n) is the product of digits in an. Is there an a1 such that this sequence is unbounded?
+
+
+INTRODUCTION:
+
+
+        I began trying to solve this problem by testing individual values for the 0th value, solving each one by hand. Starting at 1, going all the way up to 19, I found that they all ended. I used a strategy of only using integers that had not been results of any other iteration. For example, if an iteration contained a result 42, and I knew it ended, I eliminated 42 from the main process. After testing by hand, I realized that the answer might be something really weird and complicated, like 18,543, and I would never reach it. I then decided that I needed to write a program that would automate the process.
+
+
+AUTOMATION:
+________________
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+
+int productOfDigits(int num)
+{
+        int product = 1;
+ 
+        while (num != 0)  
+        {
+            product = product * (num % 10);
+            num = num / 10;
+        }
+ 
+        return product;
+}
+
+
+
+
+int find()
+{
+        // variables
+        int aZero = 1;
+
+
+        // finds aZero
+        while(aZero < 1000000000)
+        {
+            bool dualNums = false;
+            int runs = 0;
+            int prev = 0;
+            int current;
+
+
+            while(dualNums == false)
+            {
+                // edge case for the first time it runs
+                if(runs == 0)
+                {
+                    current = aZero;
+                }
+                // This case runs every other time
+                else
+                {
+                    // Here's the equation!
+                    //aN = aN-1 + f(n)
+                    current = prev + productOfDigits(prev);
+                }
+                
+
+
+                // This checks if the previous value is equal to the current value
+                if(prev == current)
+                {
+                    dualNums = true;
+                }
+
+
+                // This checks if the equation has been solved 20,000 times,
+                // without a repeated value
+                if(runs == 20000)
+                {
+                    // found a good match
+                    return aZero;
+                }
+
+
+                // increments the number of times it has run
+                runs++;
+
+
+                // sets the previous value to the current value
+                prev = current;
+            }
+            // Increment aZero
+            aZero++;
+        }
+        // return failure
+        return -1;
+}
+int main()
+{
+        int result = find();
+
+
+        if(result == -1)
+        {
+            printf("\n Did not find a candidate.");
+            return 1;
+        }
+        else
+        {
+            printf("aZero = %d does not repeat for 20,000 iterations.", result);
+            return 1;
+        }
+}
+
+
+
+
+________________
+
+
+
+
+
+
+EXPLANATION:
+
+
+I chose to write the code in C language in order to get the most efficiency, so I could run large numbers. The main structure of the find() function is two loops. The first, outer loop goes through all integers, starting at 1, and stopping where I tell it. The second loop calculates the equation, and compares the current and previous results. If the two results are the same, then the loop breaks, and continues on to the next a0 value. If it finds a series that continues on for 20,000 iterations, it returns that value to be displayed. If it reaches the end of the outer loop, it returns nothing.
+        I first started with only testing 1 to 1,000. To my surprise, it found nothing. Then 10,000. Nothing again. 100,000 finds nothing as well. All the way up to 1,000,000,000. This took my relatively weak processor about 5 minutes to compute. If I wanted to increase it by an order of 10, it would be an hour to compute.
+        If I had access to a very powerful processor, the program would be able to calculate MUCH bigger numbers. Although, I don’t think that is necessary. I do not believe that there is an answer.
+
+
+
+
+
+
+
+
+ANALYSIS:
+        
+        I hypothesize that the solution to the claim does not exist. There is no integer that a0 can be that will allow the sequence to be unbounded. I don’t have a proof, but I do have lots of evidence. If there is not one in the range of 1 to a billion, that would lead me to believe that there is not one in the next billion, or even trillion, and so on.
+        
+        I also hypothesize that it is unprovable. After seeing the results of my program, I tried to find a proof that an integer that fits the description can not exist. I came up short without any progress on the matter. It does not make sense that a system that can only be determined when you run it can be algorithmically predicted, because the system itself is the algorithm. It is the equation to itself. It's like saying 1 = 1, and asking for a proof.
+
+
+FURTHER QUESTIONS:
+        
+Q: Can something be true, but not provable?
+        
+        This question led me to find some resources on the topic. It turns out that this is a serious discussion about the core of mathematics. In an essay by Brooklyn College Computer Science professor, Noson S. Yonovsky, he states that “Before Gödel, all true statements in basic arithmetic were thought to be provable. Gödel showed that this view was wrong and that there are statements that are true but not provable.” He is referring to Gödel’s incompleteness theorem. This revolutionary theorem, written in 1931, uses mathematical logic to redefine the system of mathematics, and what it says about what is true and what is false (Wikipedia - Gödel’s Incompleteness Theorem). Through this theorem, it can be shown that there are things that are true, but cannot be proven.
+        
+        The problem is undecidable. I believe that my claim that there is no a0 value that exists that lets the sequence be unbounded lies within what Yonovsky defines in his paper as in the circle of what is true, but not provable.
+
+
+CONCLUSION:
+        
+        I do not fully understand Gödel’s incompleteness theorem, and where exactly the question of the unbounded sequence lies. There are similarities between this equation and others that do undoubtedly exist within the true but not provable circle. For example, the next state of the sequence relies on the previous state of the sequence. The Wikipedia article explains that Alan Turing came up with a related “halting problem” where it is impossible to find the final state without running the program. The problem shows  “...some functions are mathematically definable but not computable” (Wikipedia - Halting Problem). The equation in question behaves similar to a Turing machine. It can either move on, or forever loop. Definable but not computable would be an accurate way to describe this problem. There is no solution, and we will never find one, but we will also never be able to prove it. This is because of the inherent properties of a formal system of mathematics.
+
+
+
+
+SOURCES:
+
+
+S. Yanofsky, N. (n.d.). True but Unprovable. In http://www.sci.brooklyn.cuny.edu. City University of New York.
+Wikipedia contributors. (2001, September 21). Gödel’s incompleteness theorems. Wikipedia. https://en.wikipedia.org/wiki/G%C3%B6del%27s_incompleteness_theorems
+Wikipedia contributors. (2024, August 11). Halting problem. Wikipedia. https://en.wikipedia.org/wiki/Halting_problem
